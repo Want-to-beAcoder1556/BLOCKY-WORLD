@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Blocky World Studio</title>
+    <title>Blocky World Studio & Multiplayer</title>
     <style>
         body { margin: 0; overflow: hidden; background-color: #87CEEB; font-family: 'Segoe UI', sans-serif; touch-action: none; }
         #game-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
@@ -12,6 +12,7 @@
         button { color: white; border: none; padding: 12px 20px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: transform 0.1s, filter 0.2s; }
         button:hover { filter: brightness(1.2); transform: scale(1.02); }
         button:active { transform: scale(0.98); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
         .btn-primary { background: #007bff; } .btn-success { background: #28a745; } .btn-danger { background: #dc3545; } .btn-warning { background: #ffc107; color: black; } .btn-secondary { background: #6c757d; }
         .btn-small { padding: 5px 10px; font-size: 14px; }
 
@@ -78,7 +79,7 @@
     <div id="hud">
         <div id="top-bar">
             <div id="score-display"></div>
-            <button id="quit-btn" class="btn-danger" onclick="quitToHub()">Quit</button>
+            <button id="quit-btn" class="btn-danger" onclick="window.quitToHub()">Quit</button>
         </div>
         <div id="shiftlock-crosshair"></div>
         <div id="center-crosshair"></div>
@@ -87,19 +88,19 @@
     <!-- Map Builder Studio UI -->
     <div id="studio-ui">
         <div id="studio-toolbar">
-            <button class="btn-primary btn-small" onclick="addCustomBlock()">+ Add Block</button>
-            <button class="btn-success btn-small" onclick="testMap()">Playtest</button>
-            <button class="btn-warning btn-small" onclick="openSaveMenu(true)">Save Map</button>
-            <button class="btn-danger btn-small" onclick="quitToHub()">Exit Studio</button>
+            <button class="btn-primary btn-small" onclick="window.addCustomBlock()">+ Add Block</button>
+            <button class="btn-success btn-small" onclick="window.testMap()">Playtest</button>
+            <button class="btn-warning btn-small" onclick="window.openSaveMenu(true)">Save Map</button>
+            <button class="btn-danger btn-small" onclick="window.quitToHub()">Exit Studio</button>
         </div>
         
         <div id="studio-properties">
             <h3 style="margin-top:0; border-bottom:1px solid #555; padding-bottom:5px;">Properties</h3>
-            <button class="btn-danger btn-small" style="width:100%; margin-bottom:10px;" onclick="deleteSelectedBlock()">Delete Block</button>
+            <button class="btn-danger btn-small" style="width:100%; margin-bottom:10px;" onclick="window.deleteSelectedBlock()">Delete Block</button>
             
             <div class="prop-group">
                 <label>Function Type</label>
-                <select id="prop-type" onchange="updateSelectedBlock()">
+                <select id="prop-type" onchange="window.updateSelectedBlock()">
                     <option value="solid">Solid Normal</option>
                     <option value="lava">Red Lava (Kill)</option>
                     <option value="bouncy">Bouncy (High Jump)</option>
@@ -109,7 +110,7 @@
             </div>
             <div class="prop-group">
                 <label>Material Texture</label>
-                <select id="prop-material" onchange="updateSelectedBlock()">
+                <select id="prop-material" onchange="window.updateSelectedBlock()">
                     <option value="studs">Classic Studs</option>
                     <option value="smooth">Smooth Plastic</option>
                     <option value="wood">Wood Grain</option>
@@ -119,20 +120,20 @@
             </div>
             <div class="prop-group">
                 <label>Color</label>
-                <input type="color" id="prop-color" oninput="updateSelectedBlock()">
+                <input type="color" id="prop-color" oninput="window.updateSelectedBlock()">
             </div>
             
-            <div class="prop-group"><label>Position X <span id="val-px" class="val-display">0</span></label><input type="range" id="prop-px" min="-100" max="100" step="1" oninput="updateSelectedBlock()"></div>
-            <div class="prop-group"><label>Position Y <span id="val-py" class="val-display">0</span></label><input type="range" id="prop-py" min="-20" max="100" step="1" oninput="updateSelectedBlock()"></div>
-            <div class="prop-group"><label>Position Z <span id="val-pz" class="val-display">0</span></label><input type="range" id="prop-pz" min="-100" max="100" step="1" oninput="updateSelectedBlock()"></div>
+            <div class="prop-group"><label>Position X <span id="val-px" class="val-display">0</span></label><input type="range" id="prop-px" min="-100" max="100" step="1" oninput="window.updateSelectedBlock()"></div>
+            <div class="prop-group"><label>Position Y <span id="val-py" class="val-display">0</span></label><input type="range" id="prop-py" min="-20" max="100" step="1" oninput="window.updateSelectedBlock()"></div>
+            <div class="prop-group"><label>Position Z <span id="val-pz" class="val-display">0</span></label><input type="range" id="prop-pz" min="-100" max="100" step="1" oninput="window.updateSelectedBlock()"></div>
             
-            <div class="prop-group"><label>Scale X <span id="val-sx" class="val-display">4</span></label><input type="range" id="prop-sx" min="1" max="50" step="1" oninput="updateSelectedBlock()"></div>
-            <div class="prop-group"><label>Scale Y <span id="val-sy" class="val-display">4</span></label><input type="range" id="prop-sy" min="1" max="50" step="1" oninput="updateSelectedBlock()"></div>
-            <div class="prop-group"><label>Scale Z <span id="val-sz" class="val-display">4</span></label><input type="range" id="prop-sz" min="1" max="50" step="1" oninput="updateSelectedBlock()"></div>
+            <div class="prop-group"><label>Scale X <span id="val-sx" class="val-display">4</span></label><input type="range" id="prop-sx" min="1" max="50" step="1" oninput="window.updateSelectedBlock()"></div>
+            <div class="prop-group"><label>Scale Y <span id="val-sy" class="val-display">4</span></label><input type="range" id="prop-sy" min="1" max="50" step="1" oninput="window.updateSelectedBlock()"></div>
+            <div class="prop-group"><label>Scale Z <span id="val-sz" class="val-display">4</span></label><input type="range" id="prop-sz" min="1" max="50" step="1" oninput="window.updateSelectedBlock()"></div>
             
-            <div class="prop-group"><label>Rotation X <span id="val-rx" class="val-display">0</span></label><input type="range" id="prop-rx" min="0" max="360" step="15" oninput="updateSelectedBlock()"></div>
-            <div class="prop-group"><label>Rotation Y <span id="val-ry" class="val-display">0</span></label><input type="range" id="prop-ry" min="0" max="360" step="15" oninput="updateSelectedBlock()"></div>
-            <div class="prop-group"><label>Rotation Z <span id="val-rz" class="val-display">0</span></label><input type="range" id="prop-rz" min="0" max="360" step="15" oninput="updateSelectedBlock()"></div>
+            <div class="prop-group"><label>Rotation X <span id="val-rx" class="val-display">0</span></label><input type="range" id="prop-rx" min="0" max="360" step="15" oninput="window.updateSelectedBlock()"></div>
+            <div class="prop-group"><label>Rotation Y <span id="val-ry" class="val-display">0</span></label><input type="range" id="prop-ry" min="0" max="360" step="15" oninput="window.updateSelectedBlock()"></div>
+            <div class="prop-group"><label>Rotation Z <span id="val-rz" class="val-display">0</span></label><input type="range" id="prop-rz" min="0" max="360" step="15" oninput="window.updateSelectedBlock()"></div>
         </div>
     </div>
 
@@ -142,11 +143,12 @@
         <!-- Main Hub Menu -->
         <div class="menu-panel active-panel" id="main-menu">
             <h1>Blocky World</h1>
-            <p>Welcome to the Hub! What would you like to do?</p>
+            <p style="color: #4CAF50; font-weight: bold; margin-bottom: 5px;">⬤ Multiplayer Enabled</p>
+            <p style="margin-top:0;">Welcome to the Hub! What would you like to do?</p>
             <div class="btn-container">
-                <button class="btn-success" onclick="showPanel('games-menu')">Play Mini-Games</button>
-                <button class="btn-primary" onclick="showPanel('builder-menu')">Map Builder Studio</button>
-                <button class="btn-warning" onclick="startCustomizer()">Customize Avatar</button>
+                <button class="btn-success" onclick="window.showPanel('games-menu')">Play Mini-Games</button>
+                <button class="btn-primary" onclick="window.showPanel('builder-menu')">Map Builder Studio</button>
+                <button class="btn-warning" onclick="window.startCustomizer()">Customize Avatar</button>
             </div>
         </div>
 
@@ -154,11 +156,11 @@
         <div class="menu-panel" id="games-menu">
             <h1>Select Game</h1>
             <div class="btn-container">
-                <button class="btn-success" onclick="prepGame('obby')">The Classic Obby (Obstacles)</button>
-                <button class="btn-primary" onclick="prepGame('collector')">Coin Collector (Exploration)</button>
-                <button class="btn-danger" onclick="prepGame('maze')">The Maze Escape (Puzzle)</button>
-                <button class="btn-warning" onclick="openSaveMenu(false)">Play Saved Map</button>
-                <button class="btn-secondary" onclick="showPanel('main-menu')">Back to Hub</button>
+                <button class="btn-success" onclick="window.prepGame('obby')">The Classic Obby (Obstacles)</button>
+                <button class="btn-primary" onclick="window.prepGame('collector')">Coin Collector (Exploration)</button>
+                <button class="btn-danger" onclick="window.prepGame('maze')">The Maze Escape (Puzzle)</button>
+                <button class="btn-warning" onclick="window.openSaveMenu(false)">Play Saved Map</button>
+                <button class="btn-secondary" onclick="window.showPanel('main-menu')">Back to Hub</button>
             </div>
         </div>
 
@@ -167,9 +169,9 @@
             <h1>Studio Mode</h1>
             <p>Build your own obbies and maps!</p>
             <div class="btn-container">
-                <button class="btn-primary" onclick="prepGame('studio_new')">Create New Map</button>
-                <button class="btn-warning" onclick="openSaveMenu(false, true)">Edit Saved Map</button>
-                <button class="btn-secondary" onclick="showPanel('main-menu')">Back to Hub</button>
+                <button class="btn-primary" onclick="window.prepGame('studio_new')">Create New Map</button>
+                <button class="btn-warning" onclick="window.openSaveMenu(false, true)">Edit Saved Map</button>
+                <button class="btn-secondary" onclick="window.showPanel('main-menu')">Back to Hub</button>
             </div>
         </div>
 
@@ -179,7 +181,7 @@
             <div class="slot-grid" id="save-slots-container">
                 <!-- Injected via JS -->
             </div>
-            <button class="btn-secondary" style="margin-top:20px;" onclick="closeSaveMenu()">Cancel</button>
+            <button class="btn-secondary" style="margin-top:20px;" onclick="window.closeSaveMenu()">Cancel</button>
         </div>
 
         <!-- Device Selection Menu -->
@@ -187,9 +189,9 @@
             <h1>Choose Controls</h1>
             <h2 id="selected-game-title">Game</h2>
             <div class="btn-container">
-                <button class="btn-primary" onclick="launchGame(false)">Play Desktop (Keyboard/Mouse)</button>
-                <button class="btn-success" onclick="launchGame(true)">Play Mobile (Touch Controls)</button>
-                <button class="btn-secondary" onclick="showPanel('main-menu')">Cancel</button>
+                <button class="btn-primary" onclick="window.launchGame(false)">Play Desktop (Keyboard/Mouse)</button>
+                <button class="btn-success" onclick="window.launchGame(true)">Play Mobile (Touch Controls)</button>
+                <button class="btn-secondary" onclick="window.showPanel('main-menu')">Cancel</button>
             </div>
         </div>
 
@@ -204,7 +206,7 @@
                 <label>Left Leg: <input type="color" id="col-lLeg" value="#00ff00"></label>
                 <label>Right Leg: <input type="color" id="col-rLeg" value="#00ff00"></label>
             </div>
-            <div class="btn-container"><button class="btn-success" onclick="exitCustomizer()">Save & Exit</button></div>
+            <div class="btn-container"><button class="btn-success" onclick="window.exitCustomizer()">Save & Exit</button></div>
         </div>
 
     </div>
@@ -225,9 +227,13 @@
         <div class="touch-zone round-btn" id="studio-down-btn" style="display:none;">DOWN</div>
     </div>
 
-    <script>
+    <!-- Firebase SDK (ES Modules) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
         // --- System & State ---
-        // ROBLOX PHYSICS TWEAKS: Added momentum vectors, friction, and acceleration parameters.
         const config = { 
             gravity: 45,       
             jumpForce: 22,     
@@ -239,8 +245,8 @@
         };
         const state = {
             mode: 'menu', 
-            currentGame: null,
-            velocity: new THREE.Vector3(0,0,0), // Now handles X, Y, and Z for momentum
+            currentGame: 'hub',
+            velocity: new THREE.Vector3(0,0,0),
             isGrounded: false,
             keys: { w: false, a: false, s: false, d: false, space: false, shift: false },
             joystick: { x: 0, y: 0 }, 
@@ -252,6 +258,113 @@
             
             selectedBlock: null, isSavingMode: false, isEditingMode: false
         };
+
+        // --- Firebase Multiplayer Setup ---
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        let userId = null;
+        let otherPlayers = {}; // Dictionary of remote players
+
+        async function initAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (e) { console.error("Firebase Auth Error", e); }
+        }
+        initAuth();
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                userId = user.uid;
+                setupMultiplayer();
+            }
+        });
+
+        function setupMultiplayer() {
+            if (!userId) return;
+            const playersRef = collection(db, 'artifacts', appId, 'public', 'data', 'players');
+            
+            // Listen for other players
+            onSnapshot(playersRef, (snapshot) => {
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if (data.uid === userId) return; // Skip self
+                    
+                    let currentRoom = state.mode === 'playing' ? state.currentGame : 'hub';
+                    
+                    // Filter out stale players or players in a different room
+                    if (Date.now() - data.timestamp > 6000 || data.gameId !== currentRoom) {
+                        removeOtherPlayer(data.uid);
+                        return;
+                    }
+
+                    if (!otherPlayers[data.uid]) {
+                        // Spawn new network player
+                        const networkPlayer = createPlayerMesh(data.colors);
+                        scene.add(networkPlayer.group);
+                        otherPlayers[data.uid] = { 
+                            mesh: networkPlayer.group, 
+                            materials: networkPlayer.materials,
+                            targetX: data.x, targetY: data.y, targetZ: data.z, targetRy: data.ry,
+                            lastUpdate: Date.now()
+                        };
+                    } else {
+                        // Update targets for lerping
+                        const p = otherPlayers[data.uid];
+                        p.targetX = data.x; p.targetY = data.y; p.targetZ = data.z; p.targetRy = data.ry;
+                        p.lastUpdate = Date.now();
+                        
+                        // Update colors if they changed
+                        p.materials.head.color.set(data.colors.head);
+                        p.materials.torso.color.set(data.colors.torso);
+                        p.materials.lArm.color.set(data.colors.lArm);
+                        p.materials.rArm.color.set(data.colors.rArm);
+                        p.materials.lLeg.color.set(data.colors.lLeg);
+                        p.materials.rLeg.color.set(data.colors.rLeg);
+                    }
+                });
+            }, (error) => console.error(error));
+
+            // Broadcast loop (Send our position to Firestore)
+            setInterval(() => {
+                if (!userId || state.mode === 'studio') return; // Don't broadcast if in studio editor mode
+                
+                let currentRoom = state.mode === 'playing' ? state.currentGame : 'hub';
+                
+                const pData = {
+                    uid: userId,
+                    gameId: currentRoom,
+                    x: player.position.x,
+                    y: player.position.y,
+                    z: player.position.z,
+                    ry: player.rotation.y,
+                    colors: {
+                        head: document.getElementById('col-head').value,
+                        torso: document.getElementById('col-torso').value,
+                        lArm: document.getElementById('col-lArm').value,
+                        rArm: document.getElementById('col-rArm').value,
+                        lLeg: document.getElementById('col-lLeg').value,
+                        rLeg: document.getElementById('col-rLeg').value
+                    },
+                    timestamp: Date.now()
+                };
+                
+                setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'players', userId), pData).catch(e => console.error(e));
+            }, 150); // Broadcast ~6 times a second
+        }
+
+        function removeOtherPlayer(uid) {
+            if (otherPlayers[uid]) {
+                scene.remove(otherPlayers[uid].mesh);
+                delete otherPlayers[uid];
+            }
+        }
 
         // --- Audio System ---
         let audioCtx;
@@ -280,7 +393,6 @@
                 gain.gain.setValueAtTime(0.04, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
                 osc.start(now); osc.stop(now + 0.15);
             } else if (type === 'land') {
-                // Thud sound when landing
                 osc.type = 'triangle'; osc.frequency.setValueAtTime(60, now); osc.frequency.exponentialRampToValueAtTime(20, now + 0.1);
                 gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
                 osc.start(now); osc.stop(now + 0.1);
@@ -297,7 +409,6 @@
                 gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
                 osc.start(now); osc.stop(now + 0.1);
             } else if (type === 'death') {
-                // Classic "Oof" style grunt drop
                 osc.type = 'square'; osc.frequency.setValueAtTime(350, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
                 gain.gain.setValueAtTime(0.15, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
                 osc.start(now); osc.stop(now + 0.15);
@@ -334,7 +445,6 @@
             return tex;
         }
 
-        // 1. Classic Studs
         textures.studs = generateCanvasTexture(64, 64, (ctx) => {
             ctx.fillStyle = '#E0E0E0'; ctx.fillRect(0, 0, 64, 64);
             ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, 64, 4); ctx.fillRect(0, 0, 4, 64); 
@@ -344,18 +454,14 @@
             ctx.beginPath(); ctx.arc(31, 31, 16, 0, Math.PI * 2); ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 2; ctx.stroke();
         });
 
-        // 2. Wood Grain
         textures.wood = generateCanvasTexture(128, 128, (ctx) => {
-            ctx.fillStyle = '#F5F5F5'; ctx.fillRect(0, 0, 128, 128); // Base
+            ctx.fillStyle = '#F5F5F5'; ctx.fillRect(0, 0, 128, 128); 
             for(let i=0; i<300; i++) {
                 ctx.fillStyle = `rgba(0,0,0,${Math.random() * 0.1 + 0.02})`;
-                const w = Math.random() * 4 + 1;
-                const x = Math.random() * 128;
-                ctx.fillRect(x, 0, w, 128);
+                ctx.fillRect(Math.random() * 128, 0, Math.random() * 4 + 1, 128);
             }
         });
 
-        // 3. Grass / Dirt Noise
         textures.grass = generateCanvasTexture(64, 64, (ctx) => {
             ctx.fillStyle = '#F5F5F5'; ctx.fillRect(0, 0, 64, 64);
             for(let i=0; i<800; i++) {
@@ -364,7 +470,6 @@
             }
         });
 
-        // 4. Diamond Plate
         textures.diamond = generateCanvasTexture(64, 64, (ctx) => {
             ctx.fillStyle = '#E0E0E0'; ctx.fillRect(0, 0, 64, 64);
             ctx.lineWidth = 3;
@@ -423,7 +528,6 @@
                 let sideMat = new THREE.MeshStandardMaterial({ color: color, roughness: 0.8 });
                 let topMat = sideMat;
                 
-                // Apply specific material textures
                 if (matType && textures[matType]) {
                     const tex = textures[matType].clone();
                     tex.needsUpdate = true; tex.repeat.set(w, d);
@@ -451,13 +555,13 @@
         }
 
         function registerBlockPhysics(mesh, type, startX = null) {
-            if (type === 'solid' || type === 'moving' || type === 'checkpoint' || type === 'hub' || type === 'bouncy' || type === 'spawn') {
+            if (['solid', 'moving', 'checkpoint', 'hub', 'bouncy', 'spawn'].includes(type)) {
                 collidableObjects.push(mesh);
             }
             if (type === 'lava') lavaBlocks.push(mesh);
             if (type === 'bouncy') bouncyBlocks.push(mesh);
             if (type === 'spawn') {
-                if (state.mode === 'playing') {
+                if (state.mode === 'playing' || state.mode === 'menu') {
                     state.spawnPoint.set(mesh.position.x, mesh.position.y + mesh.userData.h/2 + 2, mesh.position.z);
                     player.position.copy(state.spawnPoint);
                 }
@@ -468,8 +572,7 @@
         }
 
         function createStaticPlatform(x, y, z, w, h, d, color, type = 'solid', mat = 'studs') {
-            const data = { x, y: y+h/2, z, w, h, d, rx: 0, ry: 0, rz: 0, color, type, startX: x, material: mat };
-            return createBlockFromData(data);
+            return createBlockFromData({ x, y: y+h/2, z, w, h, d, rx: 0, ry: 0, rz: 0, color, type, startX: x, material: mat });
         }
 
         function createCoin(x, y, z) {
@@ -554,7 +657,8 @@
             return saves;
         }
 
-        function openSaveMenu(savingMode, editingMode = false) {
+        // Exported to window so HTML onclicks can find them
+        window.openSaveMenu = function(savingMode, editingMode = false) {
             state.isSavingMode = savingMode; state.isEditingMode = editingMode;
             document.getElementById('save-menu-title').innerText = savingMode ? "Save Current Map" : (editingMode ? "Edit Saved Map" : "Play Saved Map");
             const container = document.getElementById('save-slots-container'); container.innerHTML = '';
@@ -567,16 +671,16 @@
                 btn.className = 'btn-small ' + (savingMode ? 'btn-warning' : (saveData ? 'btn-success' : 'btn-secondary'));
                 btn.innerText = savingMode ? 'Save Here' : (saveData ? 'Load Map' : 'Empty');
                 if (!savingMode && !saveData) btn.disabled = true;
-                btn.onclick = () => { if (savingMode) { saveMapToSlot(slotNum); closeSaveMenu(); } else { closeSaveMenu(); prepGame('custom_' + slotNum); } };
+                btn.onclick = () => { if (savingMode) { saveMapToSlot(slotNum); window.closeSaveMenu(); } else { window.closeSaveMenu(); window.prepGame('custom_' + slotNum); } };
                 row.appendChild(btn); container.appendChild(row);
             });
-            showPanel('save-menu');
-        }
+            window.showPanel('save-menu');
+        };
 
-        function closeSaveMenu() {
+        window.closeSaveMenu = function() {
             if (state.mode === 'studio') { document.querySelectorAll('.menu-panel').forEach(p => p.classList.remove('active-panel')); document.getElementById('ui-layer').style.display = 'none'; } 
-            else { showPanel(state.isEditingMode ? 'builder-menu' : 'games-menu'); }
-        }
+            else { window.showPanel(state.isEditingMode ? 'builder-menu' : 'games-menu'); }
+        };
 
         function saveMapToSlot(slotNum) {
             const mapDataToSave = customMapData.map(mesh => mesh.userData);
@@ -615,12 +719,12 @@
             state.selectedBlock = null; document.getElementById('studio-properties').style.display = 'none';
         }
 
-        function addCustomBlock() {
+        window.addCustomBlock = function() {
             const camDir = new THREE.Vector3(0, 0, -1).applyQuaternion(cameraPivot.quaternion);
             const spawnPos = cameraPivot.position.clone().add(camDir.multiplyScalar(10));
             const data = { x: Math.round(spawnPos.x), y: Math.round(spawnPos.y), z: Math.round(spawnPos.z), w: 4, h: 4, d: 4, rx: 0, ry: 0, rz: 0, color: '#0055ff', type: 'solid', material: 'studs' };
             selectBlock(createBlockFromData(data));
-        }
+        };
 
         function selectBlock(mesh) {
             if (state.selectedBlock && state.selectedBlock.material) {
@@ -646,7 +750,7 @@
             } else document.getElementById('studio-properties').style.display = 'none';
         }
 
-        function updateSelectedBlock() {
+        window.updateSelectedBlock = function() {
             if (!state.selectedBlock) return;
             const d = state.selectedBlock.userData;
             d.type = document.getElementById('prop-type').value;
@@ -656,17 +760,17 @@
             d.w = parseFloat(document.getElementById('prop-sx').value); d.h = parseFloat(document.getElementById('prop-sy').value); d.d = parseFloat(document.getElementById('prop-sz').value);
             d.rx = THREE.MathUtils.degToRad(parseFloat(document.getElementById('prop-rx').value)); d.ry = THREE.MathUtils.degToRad(parseFloat(document.getElementById('prop-ry').value)); d.rz = THREE.MathUtils.degToRad(parseFloat(document.getElementById('prop-rz').value));
             
-            const newData = { ...d }; deleteSelectedBlock(); selectBlock(createBlockFromData(newData)); 
-        }
+            const newData = { ...d }; window.deleteSelectedBlock(); selectBlock(createBlockFromData(newData)); 
+        };
 
-        function deleteSelectedBlock() {
+        window.deleteSelectedBlock = function() {
             if (!state.selectedBlock) return;
             const mesh = state.selectedBlock;
             levelGroup.remove(mesh);
             customMapData = customMapData.filter(m => m !== mesh); collidableObjects = collidableObjects.filter(m => m !== mesh);
             lavaBlocks = lavaBlocks.filter(m => m !== mesh); movingBlocks = movingBlocks.filter(m => m.mesh !== mesh); bouncyBlocks = bouncyBlocks.filter(m => m !== mesh);
             state.selectedBlock = null; document.getElementById('studio-properties').style.display = 'none';
-        }
+        };
 
         function studioRaycastSelect() {
             if (state.mode !== 'studio') return;
@@ -679,44 +783,54 @@
             } else selectBlock(null);
         }
 
-        function testMap() {
+        window.testMap = function() {
             const tempSave = customMapData.map(mesh => mesh.userData); localStorage.setItem('blocky_temp_test', JSON.stringify(tempSave));
             document.getElementById('studio-ui').style.display = 'none'; document.getElementById('center-crosshair').style.display = 'none';
             if (document.pointerLockElement) document.exitPointerLock();
-            prepGame('custom_test');
+            window.prepGame('custom_test');
+        };
+
+        // --- Character Factory (For Local & Networked Players) ---
+        function createPlayerMesh(colors) {
+            const pGroup = new THREE.Group();
+            const pMats = {
+                head: new THREE.MeshStandardMaterial({ color: colors.head }), torso: new THREE.MeshStandardMaterial({ color: colors.torso }),
+                lArm: new THREE.MeshStandardMaterial({ color: colors.lArm }), rArm: new THREE.MeshStandardMaterial({ color: colors.rArm }),
+                lLeg: new THREE.MeshStandardMaterial({ color: colors.lLeg }), rLeg: new THREE.MeshStandardMaterial({ color: colors.rLeg })
+            };
+            const armGeom = new THREE.BoxGeometry(0.4, 1.2, 0.4); armGeom.translate(0, -0.6, 0); 
+            const legGeom = new THREE.BoxGeometry(0.45, 1.2, 0.45); legGeom.translate(0, -0.6, 0);
+
+            const pHead = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), pMats.head); pHead.position.y = 1.8; pHead.castShadow = true; pGroup.add(pHead);
+            const pTorso = new THREE.Mesh(new THREE.BoxGeometry(1, 1.2, 0.5), pMats.torso); pTorso.position.y = 0.8; pTorso.castShadow = true; pGroup.add(pTorso);
+            const plArm = new THREE.Mesh(armGeom, pMats.lArm); plArm.position.set(-0.7, 1.4, 0); plArm.castShadow = true; pGroup.add(plArm);
+            const prArm = new THREE.Mesh(armGeom, pMats.rArm); prArm.position.set(0.7, 1.4, 0); prArm.castShadow = true; pGroup.add(prArm);
+            const plLeg = new THREE.Mesh(legGeom, pMats.lLeg); plLeg.position.set(-0.25, 0.2, 0); plLeg.castShadow = true; pGroup.add(plLeg);
+            const prLeg = new THREE.Mesh(legGeom, pMats.rLeg); prLeg.position.set(0.25, 0.2, 0); prLeg.castShadow = true; pGroup.add(prLeg);
+            pGroup.children.forEach(child => child.position.y += 1.0); 
+            return { group: pGroup, materials: pMats };
         }
 
-        // --- Player Character Setup ---
-        const player = new THREE.Group(); scene.add(player);
-        const mats = {
-            head: new THREE.MeshStandardMaterial({ color: 0xffff00 }), torso: new THREE.MeshStandardMaterial({ color: 0x0000ff }),
-            lArm: new THREE.MeshStandardMaterial({ color: 0xffff00 }), rArm: new THREE.MeshStandardMaterial({ color: 0xffff00 }),
-            lLeg: new THREE.MeshStandardMaterial({ color: 0x00ff00 }), rLeg: new THREE.MeshStandardMaterial({ color: 0x00ff00 })
-        };
-        const armGeom = new THREE.BoxGeometry(0.4, 1.2, 0.4); armGeom.translate(0, -0.6, 0); 
-        const legGeom = new THREE.BoxGeometry(0.45, 1.2, 0.45); legGeom.translate(0, -0.6, 0);
-
-        const head = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), mats.head); head.position.y = 1.8; head.castShadow = true; player.add(head);
-        const torso = new THREE.Mesh(new THREE.BoxGeometry(1, 1.2, 0.5), mats.torso); torso.position.y = 0.8; torso.castShadow = true; player.add(torso);
-        const leftArm = new THREE.Mesh(armGeom, mats.lArm); leftArm.position.set(-0.7, 1.4, 0); leftArm.castShadow = true; player.add(leftArm);
-        const rightArm = new THREE.Mesh(armGeom, mats.rArm); rightArm.position.set(0.7, 1.4, 0); rightArm.castShadow = true; player.add(rightArm);
-        const leftLeg = new THREE.Mesh(legGeom, mats.lLeg); leftLeg.position.set(-0.25, 0.2, 0); leftLeg.castShadow = true; player.add(leftLeg);
-        const rightLeg = new THREE.Mesh(legGeom, mats.rLeg); rightLeg.position.set(0.25, 0.2, 0); rightLeg.castShadow = true; player.add(rightLeg);
-        player.children.forEach(child => child.position.y += 1.0); 
+        // Local Player
+        const localColors = { head: '#ffff00', torso: '#0000ff', lArm: '#ffff00', rArm: '#ffff00', lLeg: '#00ff00', rLeg: '#00ff00' };
+        const localPlayerObj = createPlayerMesh(localColors);
+        const player = localPlayerObj.group;
+        scene.add(player);
 
         const cameraPivot = new THREE.Object3D(); cameraPivot.rotation.order = 'YXZ'; 
         scene.add(cameraPivot); cameraPivot.add(camera); camera.position.set(0, 0, 6); 
 
         // --- Core UI & Lifecycle ---
-        function showPanel(panelId) { document.querySelectorAll('.menu-panel').forEach(p => p.classList.remove('active-panel')); document.getElementById(panelId).classList.add('active-panel'); }
-        function prepGame(gameId) {
+        window.showPanel = function(panelId) { document.querySelectorAll('.menu-panel').forEach(p => p.classList.remove('active-panel')); document.getElementById(panelId).classList.add('active-panel'); };
+        
+        window.prepGame = function(gameId) {
             state.currentGame = gameId; let title = gameId;
             if(gameId === 'obby') title = "The Classic Obby"; if(gameId === 'collector') title = "Coin Collector"; if(gameId === 'maze') title = "The Maze Escape";
             if(gameId === 'studio_new') title = "Studio: New Map"; if(gameId.startsWith('custom_')) title = "Playing Custom Map";
-            document.getElementById('selected-game-title').innerText = title; showPanel('device-menu');
-        }
+            document.getElementById('selected-game-title').innerText = title; window.showPanel('device-menu');
+        };
 
-        function launchGame(isMobile) {
+        window.launchGame = function(isMobile) {
             initAudio(); state.isMobile = isMobile;
             
             if (state.currentGame === 'studio_new') { state.mode = 'studio'; initStudioNew(); openStudio(); return; } 
@@ -735,18 +849,23 @@
             } else {
                 document.getElementById('mobile-ui').style.display = 'none'; document.getElementById('center-crosshair').style.display = 'none'; document.body.requestPointerLock();
             }
-        }
+        };
 
-        function quitToHub() {
-            state.mode = 'menu'; player.visible = true; document.getElementById('ui-layer').style.display = 'flex'; document.getElementById('hud').style.display = 'none'; document.getElementById('mobile-ui').style.display = 'none'; document.getElementById('studio-ui').style.display = 'none';
-            showPanel('main-menu'); buildHub(); state.keys = { w: false, a: false, s: false, d: false, space: false, shift: false }; state.joystick = { x: 0, y: 0 };
+        window.quitToHub = function() {
+            state.mode = 'menu'; state.currentGame = 'hub'; player.visible = true; document.getElementById('ui-layer').style.display = 'flex'; document.getElementById('hud').style.display = 'none'; document.getElementById('mobile-ui').style.display = 'none'; document.getElementById('studio-ui').style.display = 'none';
+            window.showPanel('main-menu'); buildHub(); state.keys = { w: false, a: false, s: false, d: false, space: false, shift: false }; state.joystick = { x: 0, y: 0 };
             if (state.shiftLock) toggleShiftLock(); if (document.pointerLockElement) document.exitPointerLock();
-        }
+        };
 
         // Customizer
-        function startCustomizer() { initAudio(); state.mode = 'customizing'; showPanel('customizer-menu'); player.position.set(0, 5, 0); state.cameraAngle = { yaw: Math.PI, pitch: 0 }; }
-        function exitCustomizer() { state.mode = 'menu'; showPanel('main-menu'); player.rotation.y = 0; }
-        ['head', 'torso', 'lArm', 'rArm', 'lLeg', 'rLeg'].forEach(part => { document.getElementById(`col-${part}`).addEventListener('input', (e) => { mats[part].color.set(e.target.value); }); });
+        window.startCustomizer = function() { initAudio(); state.mode = 'customizing'; window.showPanel('customizer-menu'); player.position.set(0, 5, 0); state.cameraAngle = { yaw: Math.PI, pitch: 0 }; };
+        window.exitCustomizer = function() { state.mode = 'menu'; window.showPanel('main-menu'); player.rotation.y = 0; };
+        
+        ['head', 'torso', 'lArm', 'rArm', 'lLeg', 'rLeg'].forEach(part => { 
+            document.getElementById(`col-${part}`).addEventListener('input', (e) => { 
+                localPlayerObj.materials[part].color.set(e.target.value); 
+            }); 
+        });
 
         buildHub();
 
@@ -758,7 +877,7 @@
             else { if(btn) btn.classList.remove('shiftlock-active'); if(cross) cross.style.display = 'none'; }
         }
 
-        document.addEventListener('pointerlockchange', () => { if (state.mode === 'playing' && !state.isMobile && document.pointerLockElement !== document.body) quitToHub(); });
+        document.addEventListener('pointerlockchange', () => { if (state.mode === 'playing' && !state.isMobile && document.pointerLockElement !== document.body) window.quitToHub(); });
         document.addEventListener('keydown', (e) => {
             const key = e.key.toLowerCase(); if (state.keys.hasOwnProperty(key)) state.keys[key] = true;
             if (e.code === 'Space') state.keys.space = true; if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') state.keys.shift = true;
@@ -898,6 +1017,37 @@
             });
             coins.forEach(coin => { coin.rotation.z += 2 * delta; coin.position.y += Math.sin(time * 5 + coin.position.x) * 0.01; });
 
+            // --- MULTIPLAYER RENDER ---
+            const currentRoom = state.mode === 'playing' ? state.currentGame : 'hub';
+            const now = Date.now();
+            for (const uid in otherPlayers) {
+                const op = otherPlayers[uid];
+                // Cull disconnected or out-of-room ghosts
+                if (now - op.lastUpdate > 6000) { removeOtherPlayer(uid); continue; }
+                
+                const m = op.mesh;
+                const oldX = m.position.x;
+                const oldZ = m.position.z;
+                
+                m.position.lerp(new THREE.Vector3(op.targetX, op.targetY, op.targetZ), delta * 15);
+                
+                let diff = op.targetRy - m.rotation.y;
+                while(diff < -Math.PI) diff += Math.PI * 2; while(diff > Math.PI) diff -= Math.PI * 2;
+                m.rotation.y += diff * delta * 15;
+                
+                // Network walking animation
+                const distMoved = Math.sqrt((m.position.x - oldX)**2 + (m.position.z - oldZ)**2);
+                if (distMoved > 0.01) {
+                    op.animTime = (op.animTime || 0) + delta * 15 * (distMoved/0.05); 
+                    const swing = Math.sin(op.animTime) * 0.8; 
+                    m.children[4].rotation.x = swing; m.children[5].rotation.x = -swing; m.children[2].rotation.x = -swing; m.children[3].rotation.x = swing;
+                } else {
+                    op.animTime = 0;
+                    m.children[4].rotation.x = THREE.MathUtils.lerp(m.children[4].rotation.x, 0, 10 * delta); m.children[5].rotation.x = THREE.MathUtils.lerp(m.children[5].rotation.x, 0, 10 * delta);
+                    m.children[2].rotation.x = THREE.MathUtils.lerp(m.children[2].rotation.x, 0, 10 * delta); m.children[3].rotation.x = THREE.MathUtils.lerp(m.children[3].rotation.x, 0, 10 * delta);
+                }
+            }
+
             if (state.mode === 'playing') {
                 if (state.currentGame === 'obby' && player.position.z < -55 && state.spawnPoint.z > -50) state.spawnPoint.set(0, 6, -60); 
                 else if (state.currentGame === 'collector') {
@@ -910,21 +1060,17 @@
                     }
                 }
 
-                // --- ROBLOX STYLE VERTICAL PHYSICS (Gravity + Ceiling Head-Bonks) ---
                 state.velocity.y -= config.gravity * delta;
                 let nextY = player.position.y + state.velocity.y * delta;
                 
-                // Head Collision Raycast (Looking up)
                 if (state.velocity.y > 0) {
                     raycaster.set(new THREE.Vector3(player.position.x, player.position.y + config.playerHeight/2, player.position.z), upVector);
                     const headIntersects = raycaster.intersectObjects(collidableObjects);
                     if (headIntersects.length > 0 && headIntersects[0].distance < (config.playerHeight/2 + 0.2)) {
-                        state.velocity.y = -2; // Head Bonk! Starts falling immediately.
-                        nextY = player.position.y;
+                        state.velocity.y = -2; nextY = player.position.y;
                     }
                 }
 
-                // Ground Collision Raycast (Looking down)
                 raycaster.set(new THREE.Vector3(player.position.x, player.position.y + 1, player.position.z), downVector);
                 const groundObjects = collidableObjects.concat(lavaBlocks); 
                 const intersects = raycaster.intersectObjects(groundObjects);
@@ -938,7 +1084,7 @@
                         nextY = intersects[0].point.y;
                         state.isGrounded = true;
                         
-                        if (!wasGrounded && state.velocity.y < -15) playSound('land'); // Landing Sound if falling fast enough
+                        if (!wasGrounded && state.velocity.y < -15) playSound('land'); 
 
                         state.velocity.y = 0;
                         if (hitObj.userData && hitObj.userData.type === 'bouncy') {
@@ -956,7 +1102,6 @@
                     state.velocity.y = config.jumpForce; state.isGrounded = false; state.keys.space = false; playSound('jump');
                 }
 
-                // --- ROBLOX STYLE HORIZONTAL PHYSICS (Momentum & Friction) ---
                 const inputDir = new THREE.Vector3(0, 0, 0);
                 if (state.isMobile) { inputDir.x = state.joystick.x; inputDir.z = state.joystick.y; } 
                 else {
@@ -967,31 +1112,26 @@
 
                 if (inputDir.lengthSq() > 0) {
                     inputDir.applyAxisAngle(new THREE.Vector3(0, 1, 0), state.cameraAngle.yaw);
-                    
-                    // Acceleration
                     state.velocity.x += inputDir.x * config.acceleration * delta;
                     state.velocity.z += inputDir.z * config.acceleration * delta;
                     
-                    // Cap Speed
                     const horizSpeed = Math.sqrt(state.velocity.x*state.velocity.x + state.velocity.z*state.velocity.z);
                     if (horizSpeed > config.maxSpeed) {
                         state.velocity.x = (state.velocity.x / horizSpeed) * config.maxSpeed;
                         state.velocity.z = (state.velocity.z / horizSpeed) * config.maxSpeed;
                     }
                 } else {
-                    // Friction
                     state.velocity.x = THREE.MathUtils.lerp(state.velocity.x, 0, config.friction * delta);
                     state.velocity.z = THREE.MathUtils.lerp(state.velocity.z, 0, config.friction * delta);
                 }
 
-                // Wall Collisions (X and Z evaluated independently for wall gliding)
                 const nextPosX = player.position.clone(); nextPosX.x += state.velocity.x * delta;
                 if (!checkCollisions(nextPosX, collidableObjects)) player.position.x = nextPosX.x;
-                else state.velocity.x = 0; // Stop X momentum if hitting wall
+                else state.velocity.x = 0; 
 
                 const nextPosZ = player.position.clone(); nextPosZ.z += state.velocity.z * delta;
                 if (!checkCollisions(nextPosZ, collidableObjects)) player.position.z = nextPosZ.z;
-                else state.velocity.z = 0; // Stop Z momentum if hitting wall
+                else state.velocity.z = 0; 
 
                 const isMoving = Math.abs(state.velocity.x) > 1 || Math.abs(state.velocity.z) > 1;
 
@@ -1003,20 +1143,23 @@
                 }
 
                 if (isMoving) {
-                    // Walking Animation
                     const speedMultiplier = Math.sqrt(state.velocity.x**2 + state.velocity.z**2) / config.maxSpeed;
                     animationTime += delta * 15 * speedMultiplier; 
                     const swing = Math.sin(animationTime) * 0.8; 
-                    leftLeg.rotation.x = swing; rightLeg.rotation.x = -swing; leftArm.rotation.x = -swing; rightArm.rotation.x = swing;
+                    
+                    // Specific refs to limbs since we're using a group
+                    player.children[4].rotation.x = swing; player.children[5].rotation.x = -swing; 
+                    player.children[2].rotation.x = -swing; player.children[3].rotation.x = swing;
 
-                    // Footstep Sounds matched to speed
                     if (state.isGrounded && audioCtx && audioCtx.currentTime - state.lastWalkSoundTime > 0.3 / speedMultiplier) { 
                         playSound('walk'); state.lastWalkSoundTime = audioCtx.currentTime; 
                     }
                 } else {
                     animationTime = 0;
-                    leftLeg.rotation.x = THREE.MathUtils.lerp(leftLeg.rotation.x, 0, 10 * delta); rightLeg.rotation.x = THREE.MathUtils.lerp(rightLeg.rotation.x, 0, 10 * delta);
-                    leftArm.rotation.x = THREE.MathUtils.lerp(leftArm.rotation.x, 0, 10 * delta); rightArm.rotation.x = THREE.MathUtils.lerp(rightArm.rotation.x, 0, 10 * delta);
+                    player.children[4].rotation.x = THREE.MathUtils.lerp(player.children[4].rotation.x, 0, 10 * delta); 
+                    player.children[5].rotation.x = THREE.MathUtils.lerp(player.children[5].rotation.x, 0, 10 * delta);
+                    player.children[2].rotation.x = THREE.MathUtils.lerp(player.children[2].rotation.x, 0, 10 * delta); 
+                    player.children[3].rotation.x = THREE.MathUtils.lerp(player.children[3].rotation.x, 0, 10 * delta);
                 }
 
                 if (state.shiftLock) {
@@ -1073,7 +1216,7 @@
                 camera.position.set(0,0,0); 
                 
             } else if (state.mode === 'menu') {
-                animationTime += delta * 5; leftArm.rotation.x = Math.sin(animationTime) * 0.1; rightArm.rotation.x = -Math.sin(animationTime) * 0.1;
+                animationTime += delta * 5; player.children[2].rotation.x = Math.sin(animationTime) * 0.1; player.children[3].rotation.x = -Math.sin(animationTime) * 0.1;
                 const pivotTarget = player.position.clone(); pivotTarget.y += 1.5; cameraPivot.position.lerp(pivotTarget, 0.2);
                 cameraPivot.rotation.y = state.cameraAngle.yaw; cameraPivot.rotation.x = state.cameraAngle.pitch;
                 camera.position.z = THREE.MathUtils.lerp(camera.position.z, 6, 0.2);
