@@ -260,11 +260,29 @@
         };
 
         // --- Firebase Multiplayer Setup ---
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+// Firebase disabled fallback
+let app = null;
+let auth = null;
+let db = null;
+let appId = 'local-game';
+
+try {
+    const firebaseConfig = typeof __firebase_config !== 'undefined'
+        ? JSON.parse(__firebase_config)
+        : null;
+
+    if (firebaseConfig) {
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        appId = typeof __app_id !== 'undefined'
+            ? __app_id
+            : 'default-app-id';
+    }
+} catch (e) {
+    console.warn("Firebase disabled:", e);
+}
         let userId = null;
         let otherPlayers = {}; // Dictionary of remote players
 
@@ -277,9 +295,9 @@
                 }
             } catch (e) { console.error("Firebase Auth Error", e); }
         }
-        initAuth();
+        if (auth) initAuth();
 
-        onAuthStateChanged(auth, (user) => {
+        if (auth) onAuthStateChanged(auth, (user) => {
             if (user) {
                 userId = user.uid;
                 setupMultiplayer();
@@ -728,11 +746,31 @@
 
         function selectBlock(mesh) {
             if (state.selectedBlock && state.selectedBlock.material) {
-                state.selectedBlock.material.forEach(m => { m.emissive.setHex(0x000000); m.emissiveIntensity = 0; });
-            }
+    const mats = Array.isArray(state.selectedBlock.material)
+        ? state.selectedBlock.material
+        : [state.selectedBlock.material];
+
+    mats.forEach(m => {
+        if (m.emissive) {
+            m.emissive.setHex(0x000000);
+            m.emissiveIntensity = 0;
+        }
+    });
+}
             state.selectedBlock = mesh;
             if (mesh) {
-                if(mesh.material) mesh.material.forEach(m => { m.emissive.setHex(0x555555); m.emissiveIntensity = 0.5; });
+                if (mesh.material) {
+    const mats = Array.isArray(mesh.material)
+        ? mesh.material
+        : [mesh.material];
+
+    mats.forEach(m => {
+        if (m.emissive) {
+            m.emissive.setHex(0x555555);
+            m.emissiveIntensity = 0.5;
+        }
+    });
+}
                 const d = mesh.userData;
                 document.getElementById('prop-type').value = d.type || 'solid';
                 document.getElementById('prop-material').value = d.material || 'studs';
